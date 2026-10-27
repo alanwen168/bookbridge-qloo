@@ -1,0 +1,30 @@
+[Unit]
+Description=BookBridge low-volume staging preview
+After=network.target
+
+[Service]
+Type=simple
+User=bookbridge
+Group=bookbridge
+WorkingDirectory=/opt/bookbridge/current
+EnvironmentFile=/etc/bookbridge/service.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/bookbridge/current/venv/bin/uvicorn bookbridge.app:app --host 127.0.0.1 --port ${TCP_PORT} --workers 1 --no-access-log --no-proxy-headers
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30s
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictSUIDSGID=yes
+MemoryMax=384M
+CPUQuota=50%
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target
