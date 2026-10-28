@@ -105,12 +105,32 @@ class QlooClient:
     def _entity(raw: Any, expected: str) -> Entity:
         if not isinstance(raw, dict): raise QlooError("Qloo returned an unknown entity shape.")
         eid, name = raw.get("id") or raw.get("entity_id"), raw.get("name") or raw.get("title")
-        urn = raw.get("type") or raw.get("entity_type")
         if not isinstance(eid, str) or not isinstance(name, str) or not name.strip():
             raise QlooError("Qloo returned an entity without a valid ID or name.")
         try: eid = str(UUID(eid))
         except (ValueError, TypeError): raise QlooError("Qloo returned an entity without a valid UUID.")
-        if urn != TYPE_URNS[expected]: raise QlooError("Qloo returned an unexpected entity type.")
+        expected_urn = TYPE_URNS[expected]
+        singular = [raw[key] for key in ("type", "entity_type") if key in raw]
+        if any(not isinstance(value, str) or not value for value in singular):
+            raise QlooError("Qloo returned an unexpected entity type.")
+        if "types" in raw:
+            types = raw["types"]
+            if (not isinstance(types, list) or not types or
+                    any(not isinstance(value, str) or not value for value in types) or
+                    any(value != expected_urn for value in types)):
+                raise QlooError("Qloo returned an unexpected entity type.")
+        else:
+            types = None
+        if "subtype" in raw and (not isinstance(raw["subtype"], str) or raw["subtype"] != expected_urn):
+            raise QlooError("Qloo returned an unexpected entity type.")
+        if singular:
+            if all(value == "urn:entity" for value in singular):
+                if raw.get("subtype") != expected_urn:
+                    raise QlooError("Qloo returned an unexpected entity type.")
+            elif any(value != expected_urn for value in singular):
+                raise QlooError("Qloo returned an unexpected entity type.")
+        elif types is None:
+            raise QlooError("Qloo returned an unexpected entity type.")
         props = raw.get("properties") if isinstance(raw.get("properties"), dict) else {}
         author = props.get("author") if isinstance(props.get("author"), str) else None
         if len(name) > 300 or (author is not None and len(author) > 300):

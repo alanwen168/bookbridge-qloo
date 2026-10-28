@@ -1,6 +1,6 @@
 # BookBridge staging deployment
 
-These are deployment templates, not evidence that anything is deployed. The first public preview must remain the clearly labeled **invented sample**: no Qloo key currently exists, sample output is synthetic, and it is not final-entry or live-Qloo validation evidence. Live mode must not be claimed until both Qloo endpoints have been validated with an issued key.
+These are deployment templates, not evidence that anything is deployed. With no key configured, the preview provides only the clearly labeled **invented sample**. Live mode may be enabled after both Qloo endpoints have been validated with an issued key; the sample never becomes live evidence merely because live mode is available.
 
 This plan adds only an isolated `bookbridge` system user/service, nginx site, DNS record, and positive-TTL staging port lease. Preserve all foreign services, nginx defaults/includes (including any common Cloudflare real-IP policy), certificates, DNS records, leases, and files. Do not add a cron job. Never publish this private competitions repository or its history; if a public repository is required, export a separately audited clean-room tree with new history.
 
@@ -22,7 +22,7 @@ This plan adds only an isolated `bookbridge` system user/service, nginx site, DN
    TCP_PORT=<actual registry-leased port>
    ```
 
-   Leave `QLOO_API_KEY` absent for the invented-sample preview. If a real issued key is later approved, add `QLOO_API_KEY=...` only with a root-only editor. Set the directory root-owned mode `0755` and the file root-owned mode `0600`; never use `cat`, shell tracing, `systemctl show Environment`, or logs to expose the key.
+   Leave `QLOO_API_KEY` absent for the invented-sample preview. For the authorized live deployment after validating an issued key, add `QLOO_API_KEY=...` only with a root-only editor. Set the directory root-owned mode `0755` and the file root-owned mode `0600`; never use `cat`, shell tracing, `systemctl show Environment`, or logs to expose the key.
 
 ## Install and verify
 

@@ -4,7 +4,7 @@ BookBridge finds books that can bridge two readers' explicit cultural tastes. It
 
 The included **invented sample** uses the exact same ranking pipeline and no network. It is not a live Qloo integration, and live failures never fall back to it.
 
-Public preview: https://bookbridge.agencytech.app/ — the invented sample is available; live Qloo access is pending as of October 27, 2026. Deployment templates and rollback steps are in [deploy/README.md](deploy/README.md).
+Public preview: https://bookbridge.agencytech.app/ — the invented sample is always separate from live mode. An issued key was validated on October 27, 2026 against search, Insights and same-pool filtering; the deployment's server-side configuration controls live availability. Check the UI's live status rather than treating the sample as live evidence. Deployment templates and rollback steps are in [deploy/README.md](deploy/README.md).
 
 ## Run locally
 
